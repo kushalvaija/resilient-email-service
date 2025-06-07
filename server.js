@@ -3,9 +3,21 @@ const bodyParser = require('body-parser');
 const { EmailService, MockProvider } = require('./EmailService');
 
 const app = express();
+const port = process.env.PORT || 3000;
+
 app.use(bodyParser.json());
 
-const providers = [new MockProvider('SendGrid'), new MockProvider('Mailgun', 0.5)];
+// Root route to avoid "Cannot GET /"
+app.get('/', (req, res) => {
+  res.send('📧 Email Service is running on Render!');
+});
+
+// Initialize mock providers
+const providers = [
+  new MockProvider('SendGrid'),
+  new MockProvider('Mailgun', 0.5),
+];
+
 const emailService = new EmailService(providers);
 
 // Automatically send email on server start
@@ -29,6 +41,6 @@ const emailService = new EmailService(providers);
   console.log("Status check:", status);
 })();
 
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
